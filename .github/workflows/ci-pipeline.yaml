@@ -1,0 +1,31 @@
+name: CI pipeline
+
+on:
+  push:
+    branches:
+      - '*develop'
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "building and testing the app ..."
+  
+  docker-build-push:
+    needs: build-test
+    runs-on: ubuntu-latest
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Login to Container Registry
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
+        password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        push: true
+        tags: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/mock-app-image-updater:${{ github.ref_name }}

@@ -3,7 +3,11 @@ name: CI pipeline
 on:
   push:
     branches:
-      - '*develop'
+      - 'develop'
+    paths-ignore:
+      - '.github/**'
+env:
+  RELEASE_VERSION: v2.5.0
 
 jobs:
   build-test:
@@ -28,4 +32,4 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         push: true
-        tags: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/mock-app-image-updater:${{ github.ref_name }}
+        tags: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}/mock-app-image-updater:${{ env.RELEASE_VERSION }}-${{ github.ref_name }}
